@@ -9,20 +9,20 @@ struct ListNode {
   struct ListNode *next;
 };
 
-struct ListNode *get_carry(struct ListNode *node, const int *carry) {
+struct ListNode *get_carry(struct ListNode *node, int carry) {
   if (node == NULL) {
-    if (*carry) {
+    if (carry) {
       struct ListNode *new_node =
           (struct ListNode *)malloc(sizeof(struct ListNode));
       new_node->next = NULL;
-      new_node->val = *carry;
+      new_node->val = carry;
       return new_node;
     } else {
       return NULL;
     }
   }
 
-  if (*carry) {
+  if (carry) {
     node->val++;
   }
   return node;
@@ -39,7 +39,7 @@ struct ListNode *addTwoNumbers(struct ListNode *l1, struct ListNode *l2) {
   head->val = sum % 10;
 
   struct ListNode *carry_node =
-      get_carry((l1 == NULL) ? NULL : l1->next, &carry);
+      get_carry((l1 == NULL) ? NULL : l1->next, carry);
 
   head->next = addTwoNumbers(carry_node, (l2 == NULL) ? NULL : l2->next);
   return head;

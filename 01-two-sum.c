@@ -1,8 +1,8 @@
+#include <stdlib.h>
+
 /**
  * Note: The returned array must be malloced, assume caller calls free().
  */
-
-#include <stdlib.h>
 
 #define RETURN_SIZE 2
 #define BIG_PRIME 5003
@@ -18,9 +18,9 @@ typedef struct {
 } HashTable;
 
 HashTable *create_hash(void);
-int hash(const int *value);
-void insert(HashTable *, const int *value, const int *index);
-int get(HashTable *, const int *value);
+int hash(int value);
+void insert(HashTable *, int value, int index);
+int get(HashTable *, int value);
 void free_hash(HashTable *hash_table);
 
 int *twoSum(int *nums, int numsSize, int target, int *returnSize) {
@@ -32,7 +32,7 @@ int *twoSum(int *nums, int numsSize, int target, int *returnSize) {
     int result = 0;
     int get_result = -1;
 
-    if ((get_result = get(hash_table, &nums[i])) != -1) {
+    if ((get_result = get(hash_table, nums[i])) != -1) {
       free_hash(hash_table);
       output[0] = i;
       output[1] = get_result;
@@ -40,7 +40,7 @@ int *twoSum(int *nums, int numsSize, int target, int *returnSize) {
     }
 
     result = target - nums[i];
-    insert(hash_table, &result, &i);
+    insert(hash_table, result, i);
   }
 
   free_hash(hash_table);
@@ -56,17 +56,17 @@ HashTable *create_hash(void) {
   return new_hash_table;
 }
 
-int hash(const int *value) {
-  int temp = (*value < 0) ? -*value : *value;
+int hash(int value) {
+  int temp = (value < 0) ? -value : value;
   return temp % BIG_PRIME;
 }
 
-int get(HashTable *hash_table, const int *value) {
+int get(HashTable *hash_table, int value) {
   int h = hash(value);
   struct HashNode *current = hash_table->table[h];
 
   while (current != NULL) {
-    if (current->value == *value) {
+    if (current->value == value) {
       return current->index;
     }
     current = current->next;
@@ -75,13 +75,13 @@ int get(HashTable *hash_table, const int *value) {
   return -1;
 }
 
-void insert(HashTable *hash_table, const int *value, const int *index) {
+void insert(HashTable *hash_table, int value, int index) {
   int h = hash(value);
   struct HashNode *new_node =
       (struct HashNode *)malloc(sizeof(struct HashNode));
 
-  new_node->value = *value;
-  new_node->index = *index;
+  new_node->value = value;
+  new_node->index = index;
   new_node->next = hash_table->table[h];
 
   hash_table->table[h] = new_node;
@@ -90,7 +90,7 @@ void insert(HashTable *hash_table, const int *value, const int *index) {
 void free_hash(HashTable *hash_table) {
   for (int i = 0; i < BIG_PRIME; i++) {
     struct HashNode *current = hash_table->table[i];
-    while(current != NULL){
+    while (current != NULL) {
       struct HashNode *temp = current->next;
       free(current);
       current = temp;
